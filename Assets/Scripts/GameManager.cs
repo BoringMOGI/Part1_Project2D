@@ -33,6 +33,12 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;            // 월드 전체 시간 배율 x0배로 설정.
             }
         }
+
+        if(Input.GetKeyDown(KeyCode.Q))
+            AudioManager.Instance.PlaySE("jump");
+        if(Input.GetKeyDown(KeyCode.W))
+            AudioManager.Instance.PlaySE("light");
+
     }
 
     // 일시정지 해제.
@@ -57,6 +63,8 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameOver()
     {
+        AudioManager.Instance.StopBGM();
+
         isGameOver = true;
         yield return new WaitForSeconds(1.5f);
 

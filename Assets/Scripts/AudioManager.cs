@@ -10,7 +10,7 @@ public class AudioManager : MonoBehaviour
     static AudioManager instance;
     public static AudioManager Instance => instance;
 
-    [SerializeField] AudioSource seSource;          // 효과음 스피커.
+    [SerializeField] AudioEffect sePrefab;          // 효과음 소스 프리팹.
     [SerializeField] AudioClip[] effects;           // 효과음 배열.
 
     AudioSource audioSource;
@@ -29,15 +29,21 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.Play();         // BGM을 재생하라.
     }
+    public void StopBGM()
+    {
+        audioSource.Stop();         // BGM을 멈춰라.
+    }
     public void PlaySE(string name)
     {
+        // effects배열 순회.
         for(int i = 0; i< effects.Length; i++)
         {
+            // i번째의 이름이 매개변수 name과 같으면.
             if(effects[i].name == name)
             {
-                AudioClip clip = effects[i];     // effects의 i번째 대입.
-                seSource.clip = clip;            // 스피커에 clip 삽입.
-                seSource.Play();                 // 효과음 재생.
+                AudioClip clip = effects[i];                    // effects의 i번째 대입.
+                AudioEffect effect = Instantiate(sePrefab);     // prefab의 복제본 생성.
+                effect.PlaySE(clip);                            // 복제본 재생.
                 break;
             }
         }

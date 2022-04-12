@@ -19,9 +19,10 @@ public class Coin : MonoBehaviour
         Player player = collision.GetComponent<Player>();
         if(player != null)
         {
-            player.OnContactCoin(this);     // 플레이어에게 알려주기.
-            collider2D.enabled = false;     // 충돌체 끄기.
-            anim.SetTrigger("onEat");       // onEat트리거 누르기.
+            player.OnContactCoin(this);          // 플레이어에게 알려주기.
+            collider2D.enabled = false;          // 충돌체 끄기.
+            anim.SetTrigger("onEat");            // onEat트리거 누르기.
+            AudioManager.Instance.PlaySE("eat"); // 먹는 효과음 재생.
         }
     }
     private void OnDestroyCoin()
