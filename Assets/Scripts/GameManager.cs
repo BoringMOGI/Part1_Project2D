@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     bool isGameOver = false;
 
+
     private void Start()
     {
         gameOverPanel.SetActive(false);         // 게임 오버 패널 비활성화.
@@ -27,16 +28,16 @@ public class GameManager : MonoBehaviour
         // 게임 오버 상태가 아니고 ESC키를 눌렀을때. + 화면전환 중이 아닐 때.
         if (!isGameOver)
         {
-            if(Input.GetKeyDown(KeyCode.Escape) && !SceneMover.isFading)
+            if (Input.GetKeyDown(KeyCode.Escape) && !SceneMover.isFading)
             {
                 pausePanel.SetActive(true);     // 일시정지 패널 활성화.
                 Time.timeScale = 0f;            // 월드 전체 시간 배율 x0배로 설정.
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
             AudioManager.Instance.PlaySE("jump");
-        if(Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W))
             AudioManager.Instance.PlaySE("light");
 
     }
