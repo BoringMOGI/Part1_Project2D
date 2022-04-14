@@ -2804,7 +2804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   godModeTime: 2
-  maxHp: 1
+  maxHp: 2
 --- !u!4 &194271350 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7893172034177863163, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
@@ -3108,6 +3108,36 @@ Transform:
   m_Father: {fileID: 862796028}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &361659790
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 361659791}
+  m_Layer: 0
+  m_Name: Storage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &361659791
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361659790}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1870156476}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &416198117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3162,6 +3192,10 @@ PrefabInstance:
     - target: {fileID: 7893172034177863163, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7893172034177863164, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
+      propertyPath: delayDownTime
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
@@ -3438,6 +3472,10 @@ PrefabInstance:
     - target: {fileID: 7893172034177863163, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7893172034177863164, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
+      propertyPath: delayDownTime
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
@@ -4483,6 +4521,10 @@ PrefabInstance:
     - target: {fileID: 7893172034177863163, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7893172034177863164, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
+      propertyPath: delayDownTime
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
@@ -17289,7 +17331,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 361659791}
   m_Father: {fileID: 862796028}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17305,7 +17348,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e8b33c2ba5bb7c4c8f9e7835f9d4996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sePrefab: {fileID: 1396780142550969232, guid: 797a07f448ea16d4c928f3793b9dea19, type: 3}
+  poolPrefab: {fileID: 1396780142550969232, guid: 797a07f448ea16d4c928f3793b9dea19, type: 3}
+  storageParent: {fileID: 361659791}
+  poolCount: 5
   effects:
   - {fileID: 8300000, guid: a58e438b7cfa445498120af0e6169082, type: 3}
   - {fileID: 8300000, guid: b1b9c1f0ea1fcae439ed1a4d44ff05fd, type: 3}
@@ -18061,6 +18106,10 @@ PrefabInstance:
     - target: {fileID: 7893172034177863163, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7893172034177863164, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}
+      propertyPath: delayDownTime
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4f3027cb4e213d42b50ed3304d1dd4a, type: 3}

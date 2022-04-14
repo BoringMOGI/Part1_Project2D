@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 델리게이트, 인터페이스 일반화.
+// => 델리게이트 자료형으로 선언한 변수는 "함수의 주소"를 담을 수 있다.
 public delegate void ReturnPoolEvent<PoolType>(PoolType pool);
+
+// 인터페이스는 약속이다.
+// => 해당 인터페이스를 상속한 클래스는 인터페이스 내부의 함수를 "전부 구현" 해야한다.
 public interface IObjectPool<PoolType>
 {
     void Setup(ReturnPoolEvent<PoolType> onReturn);

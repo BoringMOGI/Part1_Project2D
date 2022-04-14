@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     // GetComponent는 오브젝트를 검색하기 때문에 메모리 효율이 좋지 않다.
     // 따라서 초기화 시점에 미리 검색하고 이후에는 변수를 사용한다.
     SpriteRenderer spriteRenderer;
+    Movement movement;
+    Animator anim;
 
     bool isGodMode;         // 무적모드인가?
     bool isFallDown;        // 플레이어가 아래로 떨어졌다.
@@ -26,6 +28,9 @@ public class Player : MonoBehaviour
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        movement = GetComponent<Movement>();
+        anim = GetComponent<Animator>();
+
         hp = maxHp;
     }
 
@@ -34,12 +39,7 @@ public class Player : MonoBehaviour
         if (isGodMode)
             return;
 
-        // 내 오브젝트에서 Movement를 검색한다.
-        // 이후 OnThrow함수를 trap의 transform으로 보내 호출한다.
-        Movement movement = gameObject.GetComponent<Movement>();
-        movement.OnThrow(trap.transform);
-
-        OnHit();
+        StartCoroutine(OnHit(trap.transform)); 
     }
     public void OnContactCoin(Coin target)
     {
@@ -51,26 +51,37 @@ public class Player : MonoBehaviour
         isFallDown = true;
     }
 
-    private void OnHit()
+    // Hit애니메이션 클립 이벤트.
+    public void OnEndHitAnim()
     {
-        if (isGodMode)
-            return;
-                
+        anim.SetBool("isHit", false);
+    }
+
+    private IEnumerator OnHit(Transform target)
+    {
         if ((hp -= 1) <= 0)     // 체력을 1 깍은 후 0이하라면.
         {
             OnDead();           // 죽는다.
+            Collider2D collider = GetComponent<Collider2D>();       // 콜라이더 검색.
+            collider.isTrigger = true;                              // 트리거로 변경한다.
         }
-        else
-        {
-            isGodMode = true;
-            spriteRenderer.color = new Color(1, 1, 1, 0.5f);        // 반 투명 상태.
 
-            // nameof(Method) : 함수명을 string 문자열로 변환한다.
-            // Invoke(string, int) : void
-            // => 특정 함수를 n초 후에 호출하라.
-            Invoke(nameof(ReleaseGodMode), godModeTime);
-            StartCoroutine(FlipPlayer());
-        }
+        isGodMode = true;
+        spriteRenderer.color = new Color(1, 1, 1, 0.5f);        // 반 투명 상태.
+        anim.SetBool("isHit", true);                            // 피격 애니메이션 변수 변경.
+        anim.SetTrigger("onHit");                               // onHit 트리거 당김.
+
+        // nameof(Method) : 함수명을 string 문자열로 변환한다.
+        // Invoke(string, int) : void
+        // => 특정 함수를 n초 후에 호출하라.
+        Invoke(nameof(ReleaseGodMode), godModeTime);            // n초 후에 무적 풀림.
+        StartCoroutine(FlipPlayer());                           // 플레이어의 반짝임.
+
+        // 내 오브젝트에서 Movement를 검색한다.
+        // 이후 OnThrow함수를 trap의 transform으로 보내 호출한다.
+        yield return null;
+
+        movement.OnThrow(target);
     }
     private void OnDead()
     {

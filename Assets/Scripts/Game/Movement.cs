@@ -26,18 +26,10 @@ public class Movement : MonoBehaviour
             anim.SetBool("isGrounded", value);
         }
     }
-    bool isJump;                // 내가 점프를 했는가?
     bool isLockControl;         // 컨트롤(제어)가 막혔는가?
+    int jumpCount;              // 점프 카운트.
 
-    // start함수는 이벤트 함수로 게임 시작 시 최초 1회 실행된다.
-    void Start()
-    {
-        //Vector3 position = transform.position;
-        //transform.position = new Vector3(1.0f, 1.0f, 0.0f);
-
-        // Translate는 현 위치에서 Vector3만큼 이동해라.
-        //transform.Translate(new Vector3(10.0f, 0.0f, 0.0f));
-    }
+    readonly int MAX_JUMP_COUNT = 2;
 
     // update함수는 이벤트 함수로 매 프레임마다 1회 호출된다.
     void Update()
@@ -54,6 +46,7 @@ public class Movement : MonoBehaviour
         // Rigidbody2D에 현재 오브젝트의 속련에 관한 변수가 있다.
         // Vector2 rigid.velocity;
         anim.SetFloat("velocityY", rigid.velocity.y);
+        anim.SetInteger("jumpCount", jumpCount);
     }
 
     void CheckGround()
@@ -72,9 +65,9 @@ public class Movement : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundRadius, groundMask);
         if (hit.collider != null)
         {
-            isGrounded = true;
-            isJump = false;
+            isGrounded = true;            
             isLockControl = false;
+            jumpCount = MAX_JUMP_COUNT;     // 발이 땅에 닿였을 때 점프 카운트 횟수를 최대로 돌린다.
         }
     }
     void Move()
@@ -84,7 +77,10 @@ public class Movement : MonoBehaviour
         // Vertical기준으로 위쪽은 1, 아래쪽은 -1, 비입력은 0.
         int x = (int)Input.GetAxisRaw("Horizontal");
 
-        transform.Translate(Vector3.right * x * speed * Time.deltaTime);
+        //transform.Translate(Vector3.right * x * speed * Time.deltaTime);
+        // Translate는 순간이동이기 때문에 물리 처리에서 자연스럽지 않다.
+        // 따라서 Velocity(속력)을 이용해 캐릭터를 이동시킨다.
+        rigid.velocity = new Vector2(x * speed, rigid.velocity.y);
         anim.SetInteger("horizontal", x);
         if (x != 0)
         {
@@ -96,13 +92,18 @@ public class Movement : MonoBehaviour
         // KeyDown : 키를 입력하는 순간 1번.
         // KeyUp   : 키를 때는 순간 1번
         // Key     : 누르고 있는 동안 계속.
-        if (Input.GetKeyDown(KeyCode.Space) && !isJump && isGrounded)
+
+        // 점프키를 눌렀고 점프 횟수가 0보다 클 때.
+        if (Input.GetKeyDown(KeyCode.Space) && jumpCount > 0)
         {
             // Rigidbody2D.AddForce(Vector3, ForceMode2D) : void
             //  => Vector3방향 + 힘으로 힘을 가한다.
             //  => ForceMode2D.Force   : 민다.
             //  => ForceMode2D.Impulse : 폭발적인 힘을 가한다.
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            rigid.velocity = new Vector2(rigid.velocity.x, 0f);             // 오브젝트의 속도를 x축은 그대로 y축은 0으로 변경.
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);    // 위쪽으로 힘을 가한다.            
+            anim.SetTrigger("onJump");
+            jumpCount -= 1;
             AudioManager.Instance.PlaySE("jump");
         }
     }
@@ -115,8 +116,9 @@ public class Movement : MonoBehaviour
         direction.Normalize();          // 벡터 값의 정규화.
         direction.y = 1;                // y축 벡터 제거.
 
-        // direction 방향으로 throwPower만큼 (한번에)힘을 가하라.
-        rigid.AddForce(direction * throwPower, ForceMode2D.Impulse);
+        
+        rigid.velocity = Vector2.zero;                                      // 기존의 속도를 0으로 만든다.
+        rigid.AddForce(direction * throwPower, ForceMode2D.Impulse);        // direction 방향으로 throwPower만큼 (한번에)힘을 가하라.
         isLockControl = true;
     }
 

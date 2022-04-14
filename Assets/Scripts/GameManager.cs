@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
 
     bool isGameOver = false;
 
-
     private void Start()
     {
         gameOverPanel.SetActive(false);         // 게임 오버 패널 비활성화.
