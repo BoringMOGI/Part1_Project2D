@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
 
         hp = maxHp;
+
+        StartPoint.Instance.SetStartPoint(transform);
     }
 
     public void OnContactTrap(TrapSpike trap)
@@ -49,6 +51,11 @@ public class Player : MonoBehaviour
     public void OnFallDown()
     {
         isFallDown = true;
+    }
+
+    public void OnSwitchLockControl(bool isLock)
+    {
+        movement.OnSwitchLockControl(isLock);
     }
 
     // Hit애니메이션 클립 이벤트.

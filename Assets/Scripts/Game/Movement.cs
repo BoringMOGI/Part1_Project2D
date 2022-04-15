@@ -26,8 +26,11 @@ public class Movement : MonoBehaviour
             anim.SetBool("isGrounded", value);
         }
     }
+
     bool isLockControl;         // 컨트롤(제어)가 막혔는가?
+    bool isLockControlForce;    // 제어를 강제로 막기.
     int jumpCount;              // 점프 카운트.
+
 
     readonly int MAX_JUMP_COUNT = 2;
 
@@ -37,7 +40,7 @@ public class Movement : MonoBehaviour
         CheckGround();
 
         // 플레이어가 죽지 않았고 컨트롤이 막히지 않았을 경우.
-        if (!player.isDead && !isLockControl)
+        if (!player.isDead && !isLockControl && !isLockControlForce)
         {
             Move();
             Jump();
@@ -81,6 +84,7 @@ public class Movement : MonoBehaviour
         // Translate는 순간이동이기 때문에 물리 처리에서 자연스럽지 않다.
         // 따라서 Velocity(속력)을 이용해 캐릭터를 이동시킨다.
         rigid.velocity = new Vector2(x * speed, rigid.velocity.y);
+
         anim.SetInteger("horizontal", x);
         if (x != 0)
         {
@@ -107,8 +111,6 @@ public class Movement : MonoBehaviour
             AudioManager.Instance.PlaySE("jump");
         }
     }
-
-
     public void OnThrow(Transform targetPivot)
     {
         // 내 위치 - 상대방의 위치 = 상대방에서 내 위치로 보는 방향.
@@ -121,7 +123,10 @@ public class Movement : MonoBehaviour
         rigid.AddForce(direction * throwPower, ForceMode2D.Impulse);        // direction 방향으로 throwPower만큼 (한번에)힘을 가하라.
         isLockControl = true;
     }
-
+    public void OnSwitchLockControl(bool isLock)
+    {
+        isLockControlForce = isLock;
+    }
 
     private void OnDrawGizmos()
     {
