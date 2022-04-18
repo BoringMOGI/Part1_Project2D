@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     [SerializeField] Player player;
     [SerializeField] GameObject gameOverPanel;
+    [SerializeField] GameObject gameClearPanel;
     [SerializeField] GameObject pausePanel;
     [SerializeField] SceneMover sceneMover;
+
+    public int eatCount;
+    public int gold;
 
     bool isGameOver = false;
 
@@ -83,9 +87,10 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator GameClear()
     {
-        player.OnSwitchLockControl(true);
+        player.OnSwitchLockControl(true);               // 플레이어의 제어 멈추기.
+        AudioManager.Instance.StopBGM();                // BGM 끄기.
 
-        AudioManager.Instance.StopBGM();
-        yield return null;
+        yield return new WaitForSeconds(2);             // 2초 대기.
+        gameClearPanel.SetActive(true);                 // 클리어 패널 활성화.
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Singleton<Player>
 {
     [SerializeField] float godModeTime;     // 무적 시간.
     [SerializeField] int maxHp;             // 플레이어의 최대 체력.

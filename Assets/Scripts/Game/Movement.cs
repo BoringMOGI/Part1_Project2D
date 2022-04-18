@@ -126,6 +126,10 @@ public class Movement : MonoBehaviour
     public void OnSwitchLockControl(bool isLock)
     {
         isLockControlForce = isLock;
+
+        // 나의 컨트롤이 잠기면 x축 이동 속도를 0으로 만든다.
+        if(isLock)
+            rigid.velocity = new Vector2(0f, rigid.velocity.y);
     }
 
     private void OnDrawGizmos()
