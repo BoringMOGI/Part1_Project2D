@@ -17,10 +17,8 @@ public class Player : Singleton<Player>
     bool isGodMode;         // 무적모드인가?
     bool isFallDown;        // 플레이어가 아래로 떨어졌다.
     int hp;                 // 현재 체력.
-    int coin;               // 보유 코인.
 
     public int Hp => hp;        // int형 프로퍼티. Hp를 참조하면 hp값을 리턴하겠다.
-    public int Coin => coin;    // Coin을 참조하면 coin값을 리턴하겠다.
 
     // 프로퍼티 : isDead는 참조만 가능하며 리턴 값은 아래 조건 연산자의 결과 값이다.
     public bool isDead => (hp <= 0) || isFallDown;
@@ -33,7 +31,7 @@ public class Player : Singleton<Player>
 
         hp = maxHp;
 
-        StartPoint.Instance.SetStartPoint(transform);
+        StartPoint.Instance.SetStartPoint(transform);    
     }
 
     public void OnContactTrap(TrapSpike trap)
@@ -45,8 +43,7 @@ public class Player : Singleton<Player>
     }
     public void OnContactCoin(Coin target)
     {
-        coin += 1;
-        Debug.Log($"코인 획득, 보유코인 : {coin}");
+        GameManager.Instance.AddEatCount(1); 
     }
     public void OnFallDown()
     {

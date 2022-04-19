@@ -22,13 +22,15 @@ public class GameClearPanel : MonoBehaviour
 
     IEnumerator ShowResult()
     {
-        yield return new WaitForSeconds(0.2f);                                  // 0.5초 대기.
-        eatText.text = Player.Instance.Coin.ToString("#,##0");         // eatText에 eatCount 문자 추가.
+        GameManager gm = GameManager.Instance;
 
-        yield return new WaitForSeconds(0.2f);                                  // 0.5초 대기.
-        goldText.text = GameManager.Instance.gold.ToString("#,##0");            // goldText에 gold 문자 추가.
+        yield return new WaitForSeconds(0.2f);                // 0.5초 대기.
+        eatText.text = gm.Eat.ToString("#,##0");              // eatText에 eatCount 문자 추가.
 
-        yield return new WaitForSeconds(0.2f);                                  // 0.5초 대기.
+        yield return new WaitForSeconds(0.2f);                // 0.5초 대기.
+        goldText.text = gm.Gold.ToString("#,##0");            // goldText에 gold 문자 추가.
+
+        yield return new WaitForSeconds(0.2f);                // 0.5초 대기.
         for (int i = 0; i < starImages.Length; i++)
             yield return StartCoroutine(ShowStar(starImages[i].transform));     // 해당 코루틴이 끝날때까지 대기.
     }

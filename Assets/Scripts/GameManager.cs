@@ -10,10 +10,13 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject pausePanel;
     [SerializeField] SceneMover sceneMover;
 
-    public int eatCount;
-    public int gold;
-
     bool isGameOver = false;
+    int eatCount;
+    int gold;
+
+    public int Eat => eatCount;
+    public int Gold => gold;
+
 
     private void Start()
     {
@@ -22,7 +25,6 @@ public class GameManager : Singleton<GameManager>
 
         StartCoroutine(GameStart());
     }
-
     private void Update()
     {
         if (!isGameOver && player.isDead)
@@ -45,13 +47,32 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    // 일시정지 해제.
+
+    void Save()
+    {
+        PlayerPrefs.SetInt("Eat", eatCount);
+        PlayerPrefs.SetInt("Gold", Gold);
+    }
+    void Load()
+    {
+        eatCount = PlayerPrefs.GetInt("Eat", 0);
+        gold = PlayerPrefs.GetInt("Gold", 0);
+    }
+
+    public void AddEatCount(int amount = 0)
+    {
+        eatCount += amount;
+    }
+    public void AddGold(int amount)
+    {
+        gold += amount;
+    }
+    
     public void OnReleasePause()
     {
         pausePanel.SetActive(false);            // 일시정지 패널 비활성화.
         Time.timeScale = 1f;                    // 월즈 전체 시간 배율 x1배로 설정.
-    }
-    // 게임 씬에서 나가기.
+    }    
     public void OnExitGameScene()
     {
         // 타이틀 씬 로드.
@@ -61,14 +82,15 @@ public class GameManager : Singleton<GameManager>
 
     public void OnGameClear()
     {
+        Save();
         StartCoroutine(GameClear());
     }
 
     private IEnumerator GameStart()
     {
+        Load();
         yield return new WaitForSeconds(1f);    // 1초 대기.
         AudioManager.Instance.PlayBGM();        // 싱글톤을 이용해 AudioManager객체에 접근. PlayBGM 호출.
-
     }
     private IEnumerator GameOver()
     {
@@ -93,4 +115,5 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(2);             // 2초 대기.
         gameClearPanel.SetActive(true);                 // 클리어 패널 활성화.
     }
+
 }
