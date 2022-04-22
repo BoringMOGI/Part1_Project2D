@@ -45,7 +45,7 @@ public class TrapSpike : MonoBehaviour
     {
         Player player = collision.gameObject.GetComponent<Player>();
         if(player != null)
-            player.OnContactTrap(this);
+            player.OnContactTrap(gameObject);
     }
     // 트리거와 충돌하는 동안 계속 호출.
     private void OnTriggerStay2D(Collider2D collision)

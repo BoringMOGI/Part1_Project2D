@@ -4,45 +4,59 @@ using UnityEngine;
 
 public class MovePlatform : MonoBehaviour
 {
-    [SerializeField] float leftDistance;        // 왼쪽으로 이동할 거리.
-    [SerializeField] float rightDistance;       // 오른쪽으로 이동할 거리.
-
+    [SerializeField] Vector2[] destinations;    // 이동해야할 위치 배열.
     [SerializeField] float moveSpeed;           // 움직이는 속도.
-    [SerializeField] bool isRight;              // 오른족으로 이동하는지?
+    [SerializeField] bool isReverse;            // 반대로 움직이는가?
 
     Vector3 originPos;                          // 최초 위치.
-    Vector3 leftPos;
-    Vector3 rightPos;
-
-    Transform player;
+    Transform player;                           // 플레이어.
+    int index;                                  // 목적지 index.
 
     private void Start()
     {
         originPos = transform.position;
-        leftPos = transform.position - new Vector3(leftDistance, 0, 0);
-        rightPos = transform.position + new Vector3(rightDistance, 0, 0);
-
-
-        GameObject parent = new GameObject("parent");
-        GameObject child = new GameObject("child");
-
-        child.transform.SetParent(parent.transform);
-        child.transform.SetParent(null);
+        transform.position = GetDestination(index);
     }
     private void Update()
     {
-        Vector3 destination = isRight ? rightPos : leftPos;                     // 목적지.
-        float movement = moveSpeed * Time.deltaTime * (isRight ? 1f : -1f);     // 이동량.
-        transform.position += new Vector3(movement, 0f, 0f);                    // 이동량 만큼 위치 조정.
-            
+        Vector3 destination = GetDestination(index);
+
+        // MoveTowards : 현재 위치에서 특정 위치 방향으로 이동량만큼 움직였을 때의 포지션.
+        Vector3 beforePos = transform.position;
+        transform.position = Vector3.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
+
         // 플레이어가 내 위에 있다면.
-        if(player != null)
-            player.position += new Vector3(movement, 0f, 0f);
+        if (player != null)
+        {
+            Vector3 movement = transform.position - beforePos;  // 현재 위치 - 이전 위치 : 이동량.
+            player.position += movement;                        // 플레이어의 위치를 이동량만큼 움직인다.
+        }
 
         // Mathf.Abs(value) : 값을 절대값으로 변경.
-        if(Vector3.Distance(transform.position, destination) < Mathf.Abs(movement))  // 목적지와의 거리가 짧을때.
-            isRight = !isRight;                                                      // bool값 반전.
+        // 목적지에 도착을 했다면.
+        if(transform.position == destination)
+        {
+            // 정방향으로 가고 있었는데 index가 마지막 위치라면
+            if(!isReverse && index == destinations.Length - 1)
+            {
+                isReverse = true;
+            }
+            else if(isReverse && index == 0)
+            {
+                isReverse = false;
+            }
+
+            index += isReverse ? -1 : 1;
+        }
     }
+
+    private Vector3 GetDestination(int index)
+    {
+        Vector3 position = destinations[index];
+        Vector3 destination = originPos + position;
+        return destination;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 충돌한 물체가 player와 같다면.
@@ -64,16 +78,19 @@ public class MovePlatform : MonoBehaviour
     // 내가 이동할 왼쪽 & 오른쪽 위치를 그린다.
     private void OnDrawGizmosSelected()
     {
+        if (destinations == null)
+            return;
+
         // 게임이 실행중이 아니라면
-        if (Application.isPlaying == false)
-        {
-            leftPos = transform.position - new Vector3(leftDistance, 0, 0);
-            rightPos = transform.position + new Vector3(rightDistance, 0, 0);                        
-        }
+        if (!Application.isPlaying)
+            originPos = transform.position;                
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(leftPos, 0.1f);     // 와이어형(선으로 이루어진) 원형을 그려라. (위치, 반지름)
-        Gizmos.DrawWireSphere(rightPos, 0.1f);
+        for (int i = 0; i < destinations.Length; i++)
+        {
+            Vector3 pos = destinations[i];
+            Gizmos.DrawSphere(originPos + pos, 0.1f);
+        }
 
     }
 }
