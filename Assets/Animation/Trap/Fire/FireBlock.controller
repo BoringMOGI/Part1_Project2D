@@ -37,7 +37,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: on
+    m_ConditionEvent: onFire
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1075518761732150183}
@@ -89,13 +89,13 @@ AnimatorController:
   m_Name: FireBlock
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: on
+  - m_Name: onFire
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: off
+  - m_Name: offFire
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -208,7 +208,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: off
+    m_ConditionEvent: offFire
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7334483905866006182}

@@ -2,50 +2,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrapFire : MonoBehaviour
+public class TrapFire : Trap
 {
-    [SerializeField] GameObject fireCollider;   // 불 충돌 체크 영역.
     [SerializeField] float delayTime;           // 딜레이 시간.
     [SerializeField] float continueTime;        // 지속 시간.
 
-    Animator anim;
-    bool isOn;
+    Animator anim;      // 애니메이터.
+    bool isOn;          // 작동중인가?
+    bool isFire;        // 불이 나오고 있는가?
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
-        fireCollider.SetActive(false);
+        anim = GetComponent<Animator>();    // 오브젝트에 붙어있는 Animator검색.
         isOn = false;
+        isFire = false;
     }
 
-    public void OnSwitchTrap()
+    // 함정이 눌렸다.
+    public override void OnContactEnter(GameObject gameObject)
     {
         if (isOn)
             return;
 
-        anim.SetTrigger("switch");
         isOn = true;
+        anim.SetTrigger("switch");
 
         // continueTime 후에 OnStopTrap 함수를 호출하라.
-        Invoke(nameof(OnStartTrap), delayTime);
+        Invoke(nameof(OnStartFire), delayTime);
     }
-    public void OnContactFire(GameObject target)
+
+    // 불과 충돌했다.
+    public override void OnContactStay(GameObject target)
     {
+        if (!isFire)
+            return;
+
         Player player = target.GetComponent<Player>();
         if (player != null)
             player.OnContactTrap(gameObject);
     }
 
-    private void OnStartTrap()
+    // 트랩이 작동 중이다.
+    private void OnStartFire()
     {
-        fireCollider.SetActive(true);
-        anim.SetTrigger("on");
-        Invoke(nameof(OnStopTrap), continueTime);
+        anim.SetTrigger("onFire");
+        isFire = true;
+        Invoke(nameof(OnStopFire), continueTime);
     }
 
-    private void OnStopTrap()
+    private void OnStopFire()
     {
-        anim.SetTrigger("off");
+        anim.SetTrigger("offFire");
+        isFire = false;
         isOn = false;
     }
 
