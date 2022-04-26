@@ -113,16 +113,21 @@ public class Movement : MonoBehaviour
     }
     public void OnThrow(Transform targetPivot)
     {
+       OnThrow(targetPivot.position);
+    }
+    public void OnThrow(Vector3 targetPosition)
+    {
         // 내 위치 - 상대방의 위치 = 상대방에서 내 위치로 보는 방향.
-        Vector3 direction =  transform.position - targetPivot.position;
+        Vector3 direction = transform.position - targetPosition;
         direction.Normalize();          // 벡터 값의 정규화.
         direction.y = 1;                // y축 벡터 제거.
 
-        
+
         rigid.velocity = Vector2.zero;                                      // 기존의 속도를 0으로 만든다.
         rigid.AddForce(direction * throwPower, ForceMode2D.Impulse);        // direction 방향으로 throwPower만큼 (한번에)힘을 가하라.
         isLockControl = true;
     }
+
     public void OnSwitchLockControl(bool isLock)
     {
         isLockControlForce = isLock;

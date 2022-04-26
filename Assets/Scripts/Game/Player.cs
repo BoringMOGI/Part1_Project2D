@@ -7,12 +7,18 @@ public class Player : Singleton<Player>
     [SerializeField] float godModeTime;     // 무적 시간.
     [SerializeField] int maxHp;             // 플레이어의 최대 체력.
 
+    [Header("Attack")]
+    [SerializeField] Transform footPivot;   // 발 위치.
+    [SerializeField] float attackRadius;    // 공격 범위.
+    [SerializeField] LayerMask attackMask;  // 공격 마스크.
+
     // 참조형 변수들은 캐싱해서 쓰는 것이 좋다.
     // GetComponent는 오브젝트를 검색하기 때문에 메모리 효율이 좋지 않다.
     // 따라서 초기화 시점에 미리 검색하고 이후에는 변수를 사용한다.
     SpriteRenderer spriteRenderer;
     Movement movement;
     Animator anim;
+    Rigidbody2D rigid;
 
     bool isGodMode;         // 무적모드인가?
     bool isFallDown;        // 플레이어가 아래로 떨어졌다.
@@ -28,10 +34,34 @@ public class Player : Singleton<Player>
         spriteRenderer = GetComponent<SpriteRenderer>();
         movement = GetComponent<Movement>();
         anim = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody2D>();
 
         hp = maxHp;
 
         StartPoint.Instance.SetStartPoint(transform);    
+    }
+    private void Update()
+    {
+        OnCheckAttack();
+    }
+
+    private void OnCheckAttack()
+    {
+        // 내가 하강 중이 아니라면 리턴.
+        if (rigid.velocity.y >= 0f)
+            return;
+
+        Collider2D contact = Physics2D.OverlapCircle(footPivot.position, attackRadius, attackMask);
+        if(contact != null)
+        {
+            EnemyTree enemy = contact.GetComponent<EnemyTree>();
+            if(enemy != null)
+            {
+                enemy.OnDamaged();
+                rigid.velocity = new Vector2(rigid.velocity.x, 0f);     // y축의 속도만 0으로 변환.
+                rigid.AddForce(Vector2.up * 8f, ForceMode2D.Impulse);   // 위쪽으로 3의 힘만큼 날린다.
+            }
+        }
     }
 
     public void OnContactTrap(GameObject trap)
@@ -39,7 +69,7 @@ public class Player : Singleton<Player>
         if (isGodMode)
             return;
 
-        StartCoroutine(OnHit(trap.transform)); 
+        StartCoroutine(OnHit(trap.transform.position)); 
     }
     public void OnContactCoin(Coin target)
     {
@@ -61,7 +91,7 @@ public class Player : Singleton<Player>
         anim.SetBool("isHit", false);
     }
 
-    private IEnumerator OnHit(Transform target)
+    private IEnumerator OnHit(Vector3 hitPosition)
     {
         if ((hp -= 1) <= 0)     // 체력을 1 깍은 후 0이하라면.
         {
@@ -85,7 +115,7 @@ public class Player : Singleton<Player>
         // 이후 OnThrow함수를 trap의 transform으로 보내 호출한다.
         yield return null;
 
-        movement.OnThrow(target);
+        movement.OnThrow(hitPosition);
     }
     private void OnDead()
     {
@@ -96,7 +126,6 @@ public class Player : Singleton<Player>
         isGodMode = false;                      // 무적 해제.
         spriteRenderer.color = Color.white;     // 원 색으로 되돌림.
     }
-
 
     // 코루틴.
     private IEnumerator FlipPlayer()
@@ -110,6 +139,16 @@ public class Player : Singleton<Player>
             yield return new WaitForSeconds(0.1f);      // 0.1초 대기.
             spriteRenderer.color = white;
             yield return new WaitForSeconds(0.1f);      // 0.1초 대기.
+        }
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        if(footPivot != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(footPivot.position, attackRadius);
         }
     }
 }

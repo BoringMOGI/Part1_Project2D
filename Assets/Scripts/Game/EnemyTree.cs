@@ -4,29 +4,47 @@ using UnityEngine;
 
 public class EnemyTree : MonoBehaviour
 {
-    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] Bullet bulletPrefab;
     [SerializeField] Transform bulletPivot;
     [SerializeField] float attackDelay;
-    [SerializeField] Animator anim;
-
+    [SerializeField] int hp;
+    
+    Animator anim;
     float attackTime = 0.0f;
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
 
     private void Update()
     {
-        Attack();
-        
-    }
-
-    void Attack()
-    {
-        attackTime += Time.deltaTime;       // 공격 시간을 시간 값으로 더해간다.
-        if(attackTime > attackDelay)        // 공격 시간이 딜레이 시간을 넘기면.
+        // 시간이 다 되면 애니메이션을 재생한다.
+        attackTime += Time.deltaTime;
+        if (attackTime > attackDelay)
         {
-            // 투사체 발사.
-            GameObject bullet = Instantiate(bulletPrefab, bulletPivot.position, bulletPivot.rotation);
-            bullet.name = "Tree_Bullet";
+            anim.SetTrigger("onAttack");
             attackTime = 0.0f;
         }
+    }
+
+    void Fire()
+    {
+        // 투사체 발사.
+        Bullet bullet = Instantiate(bulletPrefab, bulletPivot.position, bulletPivot.rotation);
+        bullet.name = "Tree_Bullet";
+
+        bullet.Shoot(Vector3.left);
+    }
+
+    public void OnDamaged()
+    {
+        hp -= 1;
+        if (hp <= 0)
+            Destroy(gameObject);
+        else
+            anim.SetTrigger("onDamaged");
+        
     }
 
 }
